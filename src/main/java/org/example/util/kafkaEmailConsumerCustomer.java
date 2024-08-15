@@ -8,24 +8,21 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.protocol.types.Field;
 import org.example.config.KafkaConsumerConfiguration;
 import status.customer.email.Customer;
 
 import java.time.Duration;
 import java.util.Collections;
 
-public class kafkaEmailConsumer<T> implements Runnable {
+public class kafkaEmailConsumerCustomer implements Runnable {
 
-    private final KafkaConsumer<String, T> consumer;
+    private final KafkaConsumer<String, GenericRecord> consumer;
     private final String topic;
-    private final Class<T> avroClass;
     ObjectMapper mapper;
 
-    public kafkaEmailConsumer(String topic, Class<T> avroClass) {
+    public kafkaEmailConsumerCustomer(String topic) {
         this.consumer = new KafkaConsumer<>(KafkaConsumerConfiguration.getKafkaConsumerProperties());
         this.topic = topic;
-        this.avroClass = avroClass;
         this.consumer.subscribe(Collections.singletonList(this.topic));
         this.mapper = new ObjectMapper();
     }
@@ -35,19 +32,22 @@ public class kafkaEmailConsumer<T> implements Runnable {
         try {
             while (true){
 //                System.out.println("Consuming");
-                ConsumerRecords<String, T> records = consumer.poll(Duration.ofMillis(100));
-                for (ConsumerRecord<String, T> record : records){
+                ConsumerRecords<String, GenericRecord> records = consumer.poll(Duration.ofMillis(100));
+                for (ConsumerRecord<String, GenericRecord> record : records){
                     System.out.println("Record");
 //                    T message = record.value();
                    // Customer customer = record.value();
-                    T message = mapper.readValue(record.value().toString(), avroClass);
+                    Customer message = mapper.readValue(record.value().toString(), Customer.class);
 
                     System.out.println(message);
-                    System.out.println(message.getClass());
+
+                    EmailSender.sendEmail("from@sysco.com",message.getCustomerEmail().toString(),"Order Conformation",
+                            "Dear "+ message.getCustomerName()+
+                                    ",\nYour Order No" + message.getOrderNumber() +
+                                    " with Status "+ message.getOrderStatus() +
+                                    " has been added successfully");
                 }
             }
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         } finally {

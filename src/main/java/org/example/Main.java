@@ -1,12 +1,10 @@
 package org.example;
 
-import org.example.util.kafkaEmailConsumer;
+import org.example.util.KafkaEmailConsumerEnterprices;
+import org.example.util.KafkaEmailConsumerError;
+import org.example.util.kafkaEmailConsumerCustomer;
 import status.customer.email.Customer;
 import status.enterprise.email.Enterprise;
-
-import javax.mail.*;
-import javax.mail.internet.*;
-import java.util.Properties;
 
 public class Main {
     public static void main(String[] args) {
@@ -43,9 +41,9 @@ public class Main {
 //            mex.printStackTrace();
 //        }
 
-        Thread thread1 = new Thread(new kafkaEmailConsumer<>("status.customer.email.0", Customer.class));
-        Thread thread2 = new Thread(new kafkaEmailConsumer<>("status.enterprise.email.0", Enterprise.class));
-        Thread thread3 = new Thread(new kafkaEmailConsumer<>("status.error.email.0", Error.class));
+        Thread thread1 = new Thread(new kafkaEmailConsumerCustomer("status.customer.email.0"));
+        Thread thread2 = new Thread(new KafkaEmailConsumerEnterprices("status.enterprise.email.0"));
+        Thread thread3 = new Thread(new KafkaEmailConsumerError("status.error.email.0"));
 
         System.out.println("Starting");
 
