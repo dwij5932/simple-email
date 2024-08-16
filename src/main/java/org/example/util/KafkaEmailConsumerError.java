@@ -12,7 +12,6 @@ import org.example.config.KafkaConsumerConfiguration;
 import status.customer.email.Customer;
 import status.enterprise.email.Enterprise;
 import status.error.email.Error;
-
 import java.time.Duration;
 import java.util.Collections;
 
@@ -33,12 +32,9 @@ public class KafkaEmailConsumerError implements Runnable {
     public void run() {
         try {
             while (true){
-//                System.out.println("Consuming");
                 ConsumerRecords<String, GenericRecord> records = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<String, GenericRecord> record : records){
                     System.out.println("Record");
-//                    T message = record.value();
-                    // Customer customer = record.value();
                     Error message = mapper.readValue(record.value().toString(), Error.class);
 
                     System.out.println(message);
