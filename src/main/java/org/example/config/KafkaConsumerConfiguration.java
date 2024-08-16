@@ -15,7 +15,6 @@ public class KafkaConsumerConfiguration {
         properties.put(VALUE_DESERIALIZER_CLASS_CONFIG,  KafkaAvroDeserializer.class.getName());
         properties.put(SCHEMA_DEREGISTRY_URL_CONFIG, SCHEMA_DEREGISTRY_URL);
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "group1");
-//        properties.put("specific.avro.reader", "true");
 
         return properties;
     }

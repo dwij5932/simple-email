@@ -10,7 +10,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.example.config.KafkaConsumerConfiguration;
 import status.customer.email.Customer;
-
 import java.time.Duration;
 import java.util.Collections;
 
@@ -31,12 +30,10 @@ public class kafkaEmailConsumerCustomer implements Runnable {
     public void run() {
         try {
             while (true){
-//                System.out.println("Consuming");
                 ConsumerRecords<String, GenericRecord> records = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<String, GenericRecord> record : records){
                     System.out.println("Record");
-//                    T message = record.value();
-                   // Customer customer = record.value();
+
                     Customer message = mapper.readValue(record.value().toString(), Customer.class);
 
                     System.out.println(message);

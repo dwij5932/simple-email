@@ -1,7 +1,6 @@
 package org.example.util;
 
 import org.example.config.EmailConfiguration;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Transport;
